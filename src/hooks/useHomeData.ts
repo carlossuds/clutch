@@ -1,21 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
-import { API_BASE_URL } from "../api";
+import { useNavigate } from "react-router-dom";
+import { PageData, Pages } from "../enums/pages";
+import { useApi } from "./useApi";
 
 const LOAN_PURPOSES = ["Debt Consolidation", "Personal", "API error"] as const;
 const LOAN_TERM_OPTIONS = [12, 24, 36, 48];
 
-type LoanDataType = {
+export type LoanDataType = {
   loanPurpose: (typeof LOAN_PURPOSES)[number] | null;
   amount: number | null;
   terms: number | null;
 };
-type LoanExtraDataType = {
+export type LoanExtraDataType = {
   monthlyPayments: number | null;
   apr: number | null;
   id: string | null;
 };
 
-export const useHome = () => {
+export const useHomeData = () => {
+  const navigate = useNavigate();
   const [loanData, setLoanData] = useState<LoanDataType>({
     loanPurpose: null,
     amount: null,
@@ -28,24 +31,16 @@ export const useHome = () => {
   });
   const [hasApiError, setHasApiError] = useState(false);
 
-  const fetchExtraData = useCallback(async (payload: LoanDataType) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/offers`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      setLoanExtraData(await response.json());
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  const { fetchExtraData, submitLoan } = useApi();
 
   useEffect(() => {
     if (Object.values(loanData).every(Boolean)) {
-      (async () => await fetchExtraData(loanData))();
+      (async () => {
+        const data = await fetchExtraData(loanData);
+        if (data) {
+          setLoanExtraData(data);
+        }
+      })();
     }
   }, [loanData, fetchExtraData]);
 
@@ -63,28 +58,19 @@ export const useHome = () => {
   );
 
   const onSubmit = useCallback(async () => {
-    setHasApiError(false);
-    try {
-      const response = await fetch(`${API_BASE_URL}/submissions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          offerId: loanExtraData.id,
-          ...loanData,
-        }),
-      });
-      if (response.status === 500) {
-        setHasApiError(true);
-        return;
-      }
-      const { userId } = await response.json();
-      console.log(userId);
-    } catch (error) {
-      setHasApiError(true);
+    if (!loanExtraData.id) {
+      return;
     }
-  }, [loanData, loanExtraData]);
+    setHasApiError(false);
+
+    const { userId, error } = await submitLoan({
+      ...loanData,
+      offerId: loanExtraData.id,
+    });
+    navigate(`${PageData[Pages.CONFIRMATION].path}?userId=${userId}`);
+
+    setHasApiError(error);
+  }, [loanData, loanExtraData?.id, navigate, submitLoan]);
 
   return {
     hasApiError,

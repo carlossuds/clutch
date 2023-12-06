@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useHome } from "../../hooks";
+import { useHomeData } from "../../hooks";
 import { Form, LoanAdditionalInfo } from "./components";
 
 // ToDo: create styles file
@@ -13,7 +13,7 @@ export const Home = () => {
     loanTermsOptions,
     onFieldChange,
     onSubmit,
-  } = useHome();
+  } = useHomeData();
 
   return (
     <div>
@@ -60,7 +60,7 @@ export const Home = () => {
             variant="contained"
             sx={{ borderRadius: 16, padding: 2 }}
             onClick={onSubmit}
-            disabled={!Object.values(loanData).every(Boolean)}
+            disabled={!Object.values(loanExtraData).every(Boolean)}
           >
             SUBMIT APPLICATION
           </Button>

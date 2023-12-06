@@ -1,16 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Home, Confirmation } from "./pages";
+import { PageData } from "./enums";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/confirmation",
-    element: <Confirmation />,
-  },
-]);
+const router = createBrowserRouter(Object.values(PageData));
 
 const App = () => {
   return <RouterProvider router={router} />;

@@ -6,10 +6,10 @@ import {
   TextField,
 } from "@mui/material";
 import { NumericFormat } from "react-number-format";
-import { useHome } from "../../../hooks";
+import { useHomeData } from "../../../hooks";
 
 type Props = Pick<
-  ReturnType<typeof useHome>,
+  ReturnType<typeof useHomeData>,
   "loanData" | "loanPurposeOptions" | "loanTermsOptions" | "onFieldChange"
 >;
 

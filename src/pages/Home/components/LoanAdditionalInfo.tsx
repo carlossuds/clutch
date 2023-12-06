@@ -1,7 +1,7 @@
 import { Box, Divider } from "@mui/material";
-import { useHome } from "../../../hooks";
+import { useHomeData } from "../../../hooks";
 
-type Props = Pick<ReturnType<typeof useHome>, "loanExtraData">;
+type Props = Pick<ReturnType<typeof useHomeData>, "loanExtraData">;
 
 export const LoanAdditionalInfo = ({ loanExtraData }: Props) => {
   return (
