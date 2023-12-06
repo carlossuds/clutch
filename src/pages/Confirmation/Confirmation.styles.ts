@@ -9,8 +9,7 @@ type ClassNames = [
   "SavingsPill",
   "Divider",
   "LoanList",
-  "LoanCard",
-  "TimeAndAPR"
+  "Paragraph"
 ];
 
 const Styles: Record<ClassNames[number], CSSInterpolation> = {
@@ -65,16 +64,14 @@ const Styles: Record<ClassNames[number], CSSInterpolation> = {
     gap: 16,
     marginTop: 16,
   },
-  LoanCard: {
-    boxShadow: "0px 1px 3px #d6d6d6, 1px 1px 3px #d6d6d6, -1px 1px 3px #d6d6d6",
-    borderRadius: 8,
-    "& > div": {
-      margin: 16,
+  Paragraph: {
+    fontSize: "20px",
+    lineHeight: "20px",
+    textAlign: "center",
+    margin: "32px 0",
+    "& strong": {
+      display: "block",
     },
-  },
-  TimeAndAPR: {
-    display: "flex",
-    justifyContent: "space-between",
   },
 };
 
@@ -86,5 +83,4 @@ export const StyledSavingsHeader = styled("div")(() => Styles.SavingsHeader);
 export const StyledSavingsPill = styled("div")(() => Styles.SavingsPill);
 export const StyledDivider = styled(Divider)(() => Styles.Divider);
 export const StyledLoanList = styled("ul")(() => Styles.LoanList);
-export const StyledLoanCard = styled("li")(() => Styles.LoanCard);
-export const StyledTimeAndAPR = styled("div")(() => Styles.TimeAndAPR);
+export const StyledParagraph = styled("p")(() => Styles.Paragraph);

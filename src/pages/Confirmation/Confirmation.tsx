@@ -1,26 +1,19 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
-import { CheckOutlined, Paid, MoreVert } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
+import { CheckOutlined, Paid } from "@mui/icons-material";
 
 import {
   StyledDivider,
   StyledHeader,
   StyledHeaderContent,
   StyledIconContainer,
-  StyledLoanCard,
   StyledLoanList,
+  StyledParagraph,
   StyledSavingsHeader,
   StyledSavingsPill,
   StyledThanksMessage,
-  StyledTimeAndAPR,
 } from "./Confirmation.styles";
 import { useConfirmationData } from "../../hooks";
+import { LoanCard } from "./components";
 
 export const Confirmation = () => {
   const { isLoading, loansAvailable } = useConfirmationData();
@@ -52,60 +45,16 @@ export const Confirmation = () => {
         <StyledDivider />
       </StyledSavingsHeader>
 
+      <StyledParagraph>
+        <strong>You could be saving money</strong>
+        on your existing loans.
+      </StyledParagraph>
+
       <StyledLoanList>
         {isLoading ? (
           <CircularProgress />
         ) : (
-          loansAvailable.map((loan) => (
-            <StyledLoanCard key={loan.id}>
-              <div>
-                <Typography fontSize={16} textTransform="initial">
-                  {loan.lender}
-                </Typography>
-                <Typography>${loan.monthlyPayments}/month</Typography>
-              </div>
-              <Divider />
-
-              <div>
-                <img
-                  src={loan.automobile.imageSource}
-                  alt={loan.automobile.model}
-                />
-
-                <Box>
-                  <strong>{loan.automobile.model}</strong>
-                  <span>
-                    estimated <strong>{loan.automobile.mileage}mi</strong>
-                  </span>
-                </Box>
-
-                <IconButton>
-                  <MoreVert />
-                </IconButton>
-              </div>
-              <Divider />
-
-              <StyledTimeAndAPR>
-                APR
-                <strong>{loan.apr}%</strong>
-              </StyledTimeAndAPR>
-              <Divider />
-
-              <StyledTimeAndAPR>
-                Time remaining
-                <strong>{loan.remainingMonths}mo</strong>
-              </StyledTimeAndAPR>
-              <Divider />
-
-              <Button
-                color="info"
-                variant="contained"
-                sx={{ borderRadius: 2, width: "calc(100% - 32px)", margin: 2 }}
-              >
-                START SAVING
-              </Button>
-            </StyledLoanCard>
-          ))
+          loansAvailable.map((loan) => <LoanCard key={loan.id} data={loan} />)
         )}
       </StyledLoanList>
     </div>
