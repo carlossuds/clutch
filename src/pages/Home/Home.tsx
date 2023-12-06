@@ -2,6 +2,8 @@ import { Box, Button, Typography } from "@mui/material";
 import { useHome } from "../../hooks";
 import { Form, LoanAdditionalInfo } from "./components";
 
+// ToDo: create styles file
+
 export const Home = () => {
   const {
     hasApiError,
