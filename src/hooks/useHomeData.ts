@@ -67,8 +67,9 @@ export const useHomeData = () => {
       ...loanData,
       offerId: loanExtraData.id,
     });
-    navigate(`${PageData[Pages.CONFIRMATION].path}?userId=${userId}`);
-
+    if (userId && !error) {
+      navigate(`${PageData[Pages.CONFIRMATION].path}?userId=${userId}`);
+    }
     setHasApiError(error);
   }, [loanData, loanExtraData?.id, navigate, submitLoan]);
 

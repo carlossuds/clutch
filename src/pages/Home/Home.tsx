@@ -1,8 +1,13 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import { useHomeData } from "../../hooks";
 import { Form, LoanAdditionalInfo } from "./components";
-
-// ToDo: create styles file
+import {
+  StyledButtonContainer,
+  StyledErrorMessage,
+  StyledHeader,
+  StyledMain,
+  StyledParagraph,
+} from "./Home.styles";
 
 export const Home = () => {
   const {
@@ -17,25 +22,9 @@ export const Home = () => {
 
   return (
     <div>
-      <Box
-        textAlign="center"
-        color="#FFFFFF"
-        bgcolor="#0288D1"
-        p={2}
-        fontWeight={700}
-        fontSize={22}
-      >
-        Loan information
-      </Box>
+      <StyledHeader>Loan information</StyledHeader>
 
-      <Box
-        display="flex"
-        flexDirection="column"
-        width={300}
-        m="auto"
-        gap={4}
-        mt={6}
-      >
+      <StyledMain>
         <Form
           loanData={loanData}
           loanPurposeOptions={loanPurposeOptions}
@@ -45,16 +34,16 @@ export const Home = () => {
 
         <LoanAdditionalInfo loanExtraData={loanExtraData} />
 
-        <Typography fontSize={12} textAlign="justify" color="#666666">
+        <StyledParagraph>
           Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente
           cumque maxime recusandae dolores praesentium tempora quos dolorem,
           totam odit mollitia quaerat autem reiciendis dicta ut quibusdam sequi
           repellat dolor perspiciatis officia possimus modi ex id. Non eligendi
           ipsam nostrum provident, velit praesentium adipisci quaerat mollitia
           facilis ut culpa quas molestiae.
-        </Typography>
+        </StyledParagraph>
 
-        <Box display="flex" flexDirection="column" justifyContent="center">
+        <StyledButtonContainer>
           <Button
             color="info"
             variant="contained"
@@ -65,12 +54,12 @@ export const Home = () => {
             SUBMIT APPLICATION
           </Button>
           {hasApiError && (
-            <Typography variant="caption" color="red">
+            <StyledErrorMessage>
               There has been an error. Try again later.
-            </Typography>
+            </StyledErrorMessage>
           )}
-        </Box>
-      </Box>
+        </StyledButtonContainer>
+      </StyledMain>
     </div>
   );
 };
