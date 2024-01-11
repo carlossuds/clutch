@@ -7,7 +7,7 @@ type ActionType = {
   action: Actions;
   targetBucket: BucketType;
 };
-type Step = { X: number; Y: number; explanation: string };
+export type Step = Record<BucketType, number> & { explanation: string };
 
 const getExplanationText = ({ action, targetBucket }: ActionType) => {
   switch (action) {
@@ -45,7 +45,6 @@ export const useHome = () => {
   );
 
   const onSubmit = useCallback(() => {
-    // debugger;
     const { X, Y, Z } = bucketsVolume;
     const isZGreaterThanBoth = Z > X && Z > Y;
 
@@ -54,7 +53,7 @@ export const useHome = () => {
       return;
     }
 
-    // Find who Z is closer to
+    // Find from which bucket Z's value is closer to
     const smallBucket = X >= Y ? "Y" : "X";
     const bigBucket = X < Y ? "Y" : "X";
 
@@ -83,6 +82,7 @@ export const useHome = () => {
       return;
     }
 
+    // First step, fills the bucket from where we'll have less iterations
     const currentSteps: Array<ActionType> = [
       {
         action: Actions.FILL,
@@ -183,7 +183,6 @@ export const useHome = () => {
               myObject[auxBucket] = 0;
               myObject[targetBucket] =
                 acc[index - 1][targetBucket] + auxCapacity;
-
               break;
             }
 
@@ -192,18 +191,16 @@ export const useHome = () => {
             myObject[targetBucket] = targetCapacity;
             break;
           }
+          default: {
+            const exhaustiveCheck: never = action;
+            throw new Error(`Unhandled action ${exhaustiveCheck}`);
+          }
         }
         acc.push(myObject);
         return acc;
       }, [] as Array<Step>),
     [steps, bucketsVolume]
   );
-
-  console.log({
-    bucketsVolume,
-    steps,
-    stepsTableData,
-  });
 
   return {
     hasError,

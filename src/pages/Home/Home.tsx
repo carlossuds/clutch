@@ -1,11 +1,12 @@
 import { Button, TextField } from "@mui/material";
 import { StyledHeader, StyledMain } from "./Home.styles";
 import { useHome } from "../../hooks";
+import { StepsTable } from "./components";
 
 const BUCKETS = ["X", "Y", "Z"] as const;
 
 export const Home = () => {
-  const { hasError, onFieldChange, onSubmit } = useHome();
+  const { hasError, stepsTableData, onFieldChange, onSubmit } = useHome();
   return (
     <div>
       <StyledHeader>Water Bucket Challenge</StyledHeader>
@@ -25,7 +26,7 @@ export const Home = () => {
 
         <Button onClick={onSubmit}>Submit</Button>
 
-        {hasError && "No Solution"}
+        {hasError ? "No Solution" : <StepsTable data={stepsTableData} />}
       </StyledMain>
     </div>
   );
