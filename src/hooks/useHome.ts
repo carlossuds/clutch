@@ -45,6 +45,7 @@ export const useHome = () => {
   );
 
   const onSubmit = useCallback(() => {
+    // debugger;
     const { X, Y, Z } = bucketsVolume;
     const isZGreaterThanBoth = Z > X && Z > Y;
 
@@ -54,7 +55,7 @@ export const useHome = () => {
     }
 
     // Find who Z is closer to
-    const smallBucket = X > Y ? "Y" : "X";
+    const smallBucket = X >= Y ? "Y" : "X";
     const bigBucket = X < Y ? "Y" : "X";
 
     const smallVolume = bucketsVolume[smallBucket];
@@ -91,6 +92,7 @@ export const useHome = () => {
 
     // Handles special case when Z is equal to any of the buckets
     if (Z === bucketsVolume[closestToZ]) {
+      setSteps(currentSteps);
       return;
     }
 
@@ -98,19 +100,22 @@ export const useHome = () => {
     // Handling generic cases. e.g: X < Z < Y
     // -> Remove X from Y until we get Z
     if (closestToZ === bigBucket) {
-      const difference = bigVolume - count * smallVolume;
+      let difference = bigVolume - count * smallVolume;
       while (Z < difference) {
-        currentSteps.push(
-          {
-            action: Actions.TRANSFER,
-            targetBucket: smallBucket,
-          },
-          {
+        currentSteps.push({
+          action: Actions.TRANSFER,
+          targetBucket: smallBucket,
+        });
+
+        count++;
+        difference = bigVolume - count * smallVolume;
+
+        if (Z !== difference) {
+          currentSteps.push({
             action: Actions.EMPTY,
             targetBucket: smallBucket,
-          }
-        );
-        count++;
+          });
+        }
       }
       if (Z > difference) {
         setHasError(true);
@@ -119,20 +124,22 @@ export const useHome = () => {
     }
     // -> Add X to Y until we get Z
     if (closestToZ === smallBucket) {
-      const sum = count * smallVolume;
+      let sum = count * smallVolume;
       while (Z > sum) {
-        // ToDo: Why am I getting invalid array length here?
-        currentSteps.push(
-          {
+        currentSteps.push({
+          action: Actions.TRANSFER,
+          targetBucket: bigBucket,
+        });
+
+        count++;
+        sum = count * smallVolume;
+
+        if (Z !== sum) {
+          currentSteps.push({
             action: Actions.FILL,
             targetBucket: smallBucket,
-          },
-          {
-            action: Actions.TRANSFER,
-            targetBucket: bigBucket,
-          }
-        );
-        count++;
+          });
+        }
       }
       if (Z > Y) {
         setHasError(true);
@@ -146,6 +153,7 @@ export const useHome = () => {
   const stepsTableData = useMemo(
     () =>
       steps.reduce((acc, { action, targetBucket }, index) => {
+        const auxBucket = targetBucket === "X" ? "Y" : "X";
         const myObject: Step = {
           explanation: getExplanationText({
             action,
@@ -154,20 +162,35 @@ export const useHome = () => {
           X: 0,
           Y: 0,
         };
+
         switch (action) {
           case Actions.EMPTY: {
             myObject[targetBucket] = 0;
+            myObject[auxBucket] = acc[index - 1]?.[auxBucket] ?? 0;
             break;
           }
           case Actions.FILL: {
             myObject[targetBucket] = bucketsVolume[targetBucket];
+            myObject[auxBucket] = acc[index - 1]?.[auxBucket] ?? 0;
             break;
           }
           case Actions.TRANSFER: {
-            const originBucket = targetBucket === "X" ? "Y" : "X";
-            myObject[originBucket] =
-              acc[index - 1][originBucket] - bucketsVolume[targetBucket];
-            myObject[targetBucket] = bucketsVolume[targetBucket];
+            const targetCapacity = bucketsVolume[targetBucket];
+            const auxCapacity = bucketsVolume[auxBucket];
+
+            // Filling the bigger bucket
+            if (targetCapacity > auxCapacity) {
+              myObject[auxBucket] = 0;
+              myObject[targetBucket] =
+                acc[index - 1][targetBucket] + auxCapacity;
+
+              break;
+            }
+
+            // Removing from the bigger bucket
+            myObject[auxBucket] = acc[index - 1][auxBucket] - targetCapacity;
+            myObject[targetBucket] = targetCapacity;
+            break;
           }
         }
         acc.push(myObject);
@@ -177,6 +200,7 @@ export const useHome = () => {
   );
 
   console.log({
+    bucketsVolume,
     steps,
     stepsTableData,
   });
