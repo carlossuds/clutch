@@ -203,7 +203,9 @@ export const useHome = () => {
   );
 
   return {
+    bucketsVolume,
     hasError,
+    steps,
     stepsTableData,
     onFieldChange,
     onSubmit,

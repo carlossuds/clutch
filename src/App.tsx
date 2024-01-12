@@ -1,10 +1,7 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { PageData } from "./enums";
-
-const router = createBrowserRouter(Object.values(PageData));
+import { Home } from "./pages";
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return <Home />;
 };
 
 export default App;
